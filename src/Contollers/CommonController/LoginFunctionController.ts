@@ -76,3 +76,22 @@ export const ForgetPassswordController=async(req:any,res:any)=>{
   }
   }
 
+
+  export const ResetPasswordController=async(req:any,res:any)=>{
+    const{ password,token,userType}=req.body
+    const TblName: any = await returnUserType(userType); 
+    const isTokenNotExpire=await TblName.findOne({where:{token}})
+    if(isTokenNotExpire){
+         const TokenGenTime:any=new Date(isTokenNotExpire.updatedAt.getTime())
+         const curentTime=Date.now()
+         const expTime=30000000
+         if(curentTime-TokenGenTime>=expTime){
+            return   createResponse(res, 200, "Link has been Expires!",[], false, true);
+         }else{
+            await TblName.update({token},)
+            return   createResponse(res, 200, "Password successfully updated!",[], false, true);
+         }
+    }else{
+      return   createResponse(res, 200, "Token has been Expires!",[], false, true);
+    }
+  }
