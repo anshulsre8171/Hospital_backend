@@ -3,14 +3,14 @@ import "reflect-metadata";
 import dotenv from 'dotenv';
 import { route } from './route/router';
 import { AppDataSource } from './DbConfig';
-
+import fileUpload from "express-fileupload"
 import cors from 'cors'
 
 const app = express();
 dotenv.config();
 app.use(cors())
 app.use(express.json());
-
+app.use(fileUpload())
 AppDataSource.initialize().then(() => {
     console.log(`DataSource initialized !`);
 }).catch((err: any) => {
