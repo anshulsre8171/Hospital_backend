@@ -3,6 +3,7 @@ import { returnUserType } from "../../Helpers/returnUserType";
 import path from "path";
 import { uploadFileHelper } from "../../Helpers/uploadFileHelper";
 import jsonwebtoken from 'jsonwebtoken';
+import { createRandomString, sendForgetPasswordMail } from "../../Helpers/SendMailForgetpassword";
 
 
 export const userRegisterController = async (req: any, res: any) => {
@@ -60,4 +61,18 @@ export const userLoginController = async (req: any, res: any) => {
 }
 
 
+export const ForgetPassswordController=async(req:any,res:any)=>{
+    const {email, userType} =req.body;
+    const TblName: any = await returnUserType(userType); 
+    const isExist=await TblName.findOne({where:{email}})
+
+       if(isExist){ 
+        const token= createRandomString(); 
+        await TblName.update({email:email},{ token})
+        await  sendForgetPasswordMail(email,token,userType)
+         return   createResponse(res, 200, "Mail send Successfull !",[], true, false);
+     }else{
+      return   createResponse(res, 404, "User Not Found!",[], false, true);
+  }
+  }
 
