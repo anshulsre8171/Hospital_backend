@@ -49,7 +49,7 @@ export const userLoginController = async (req: any, res: any) => {
         const tableName: any = await returnUserType(userType)
         const result = await tableName.findOne({ where: { email, password } });
         const jwtToken = await jsonwebtoken.sign({ id: result?.id, email: result?.email }, `${process.env.JWTSECRET}`, { expiresIn: '2h' })
-        const finalResult = { ...result, jwtToken }
+        const finalResult = { ...result, jwtToken,userType }
         if (result) {
             return createResponse(res, 200, "Login success", finalResult, true, false)
         } else {
@@ -95,3 +95,16 @@ export const ForgetPassswordController=async(req:any,res:any)=>{
       return   createResponse(res, 200, "Token has been Expires!",[], false, true);
     }
   }
+
+  export const getuserPic=async(req:any,res:any)=>{
+    const {id,userType}=req.params
+    const tableName: any = await returnUserType(userType)
+    const result = await tableName.findOne({ where: { id:id } });
+         const imagePath =await result.profile; // e.g., "/uploads/user1.jpg"
+         const pathToSaveFile = path.join(__dirname,'../../uploads/',imagePath);
+         res.sendFile(pathToSaveFile);
+    }
+
+  
+  
+  

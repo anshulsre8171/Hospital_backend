@@ -17,6 +17,7 @@ AppDataSource.initialize().then(() => {
     console.log(err); 
 })
 app.use("/api",route)////00/test
+// app.use("/uploads",express.static("uploads"))
 const PORT = process?.env?.PORT || 9001;
 app.listen(PORT, () => {
     console.log(`Hi your server is running on ${PORT} port`); 
