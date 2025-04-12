@@ -13,3 +13,16 @@ export const addDepartmentController = async (req: any, res: any) => {
   }
   
 }
+
+export const getDepartmentController = async (req: any, res: any) => {  
+    try{
+      const result=await Department.find()             
+      if(result?.length>0){
+       return createResponse(res, 200, "Department fetched successfully !", result, true, false)
+      }else{
+        return createResponse(res, 404, "Department not found", result, false, true)
+      } 
+    }catch(err:any){
+      return createResponse(res, 500, "Internal server error", [], false, true)
+    }
+    }
