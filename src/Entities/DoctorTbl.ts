@@ -9,7 +9,7 @@ export class Doctor extends BaseEntity{
     @Column({name:"name", type:"varchar",length:70,default:null,})
     name:any
 
-    @Column({name:"departmentId", type:"int",default:null,})
+    @Column({name:"departmentId", type:"varchar",default:null,})
     departmentId:any
 
     @Column({name:"specialist", type:"varchar",length:255,default:null,})
@@ -36,7 +36,7 @@ export class Doctor extends BaseEntity{
     @Column({name:"profile",type:"text",default:null})
     profile:any
 
-    @Column({name:"contact",type:"varchar", length:20, default:null})
+    @Column({name:"contact",type:"varchar", length:10, default:null})
     contact:any
 
     @Column({name:"password",type:"varchar", length:255, default:"Test@1234"})

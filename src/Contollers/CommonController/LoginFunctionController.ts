@@ -10,12 +10,12 @@ export const userRegisterController = async (req: any, res: any) => {
     try {
         const dataToSave = req.body;
         let { profile } = req.files;
-        console.log(dataToSave);
+        //console.log(dataToSave,"HHHHHHHHHHH");
 
         const pathToSaveFile = path.join(__dirname, '../../uploads/');
         const profileName = uploadFileHelper(profile, pathToSaveFile, res);
         const finalData: any = { ...dataToSave, profile: profileName };
-        // console.log(finalData);
+         //console.log(finalData);
         
         const TblName: any = await returnUserType(dataToSave?.userType);
         // console.log(TblName);
@@ -32,11 +32,10 @@ export const userRegisterController = async (req: any, res: any) => {
             }else{
                 return createResponse(res, 404, "User register failed !", result, false, true)
             }
-        }
-  
+        }   
     } catch (err) {
         if (err) {
-            // console.log(err);
+            console.log(err);
             createResponse(res, 500, "Internal Server Error",err, false, true);
         }
     }
