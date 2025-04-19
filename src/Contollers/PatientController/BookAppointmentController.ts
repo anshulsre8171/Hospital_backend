@@ -2,6 +2,9 @@ import moment from "moment";
  import { Doctor } from "../../Entities/DoctorTbl";
  import { AppointmentTbl } from "../../Entities/AppointmentTbl";
  import { createResponse } from "../../Helpers/createResponse";
+import { Patient } from "../../Entities/PatientTbl";
+import { Department } from "../../Entities/DepartmentTbl";
+import { AppointmentTblGen } from "../../Entities/AppointmentTblGen";
  
  export const addapController = async (req: any, res: any) => {
    try {
@@ -70,3 +73,46 @@ import moment from "moment";
      return res.status(500).json({ message: "Internal server error" });
    }
  };
+ 
+ export const addapGenController = async (req: any, res: any) => {
+  try {
+    const { patientId, departmentId, doctorId, disease,lastVisiting,contact,gender,daysFeel,day,time,fees , payment, status} = req.body;
+    if (!patientId || !doctorId || !day || !time) {  // make sure to don't miss these fields
+      return createResponse(res, 400, "Missing required fields", [], false, true)
+    }
+    const doctor = await Doctor.findOne({ where: { id: doctorId } }); // find the doctor 
+    if (!doctor) {
+     return createResponse(res, 404, "Doctor not found", [], false, true)
+     }
+
+    const days= await AppointmentTblGen.findOne({where:{day:day}}) //find day
+    const times=await AppointmentTblGen.findOne({where:{time:time}})
+    if(days && times){
+      return createResponse(res, 404, "This sloat is already booked", [], false, true)
+    }
+
+    // Create new appointment
+    const newAppointment = new AppointmentTblGen();
+    newAppointment.patientId = patientId;
+    newAppointment.departmentId = departmentId;
+    newAppointment.doctorId = doctorId;
+    newAppointment.disease = disease;
+    newAppointment.gender = gender; 
+    newAppointment.contact = contact;
+    newAppointment.daysFeel = daysFeel;
+    newAppointment.lastVisiting = lastVisiting;
+    newAppointment.day = day;
+    newAppointment.time= time;
+    newAppointment.fees = fees;
+    newAppointment.day = day;
+    newAppointment.payment = payment;
+    newAppointment.status = status;
+    await newAppointment.save();
+
+    return createResponse(res, 201, "Appointment created successfully", true, false)
+  } catch (error) {
+    console.error("Error in addapController:", error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
+

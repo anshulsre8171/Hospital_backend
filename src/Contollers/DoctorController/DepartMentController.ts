@@ -15,3 +15,16 @@ export const getDoctorBydepartmentIdController = async (req: any, res: any) => {
     }  ///dfgfd
 }
 
+export const getDoctorDaytimeBydoctorIdController =async(req:any,res:any)=>{
+    try{
+        const {doctorId}=req.query
+        const result=await Doctor.find({where:{id:doctorId}})
+        if (result?.length>0) {
+            return createResponse(res, 200, "Doctor Details fetched successfully !", result, true, false)
+        } else {
+            return createResponse(res, 404, "Doctor not found", result, false, true)
+        }
+    }catch(error:any){
+        return createResponse(res, 500, "Internal server error", [], false, true)
+    }
+}

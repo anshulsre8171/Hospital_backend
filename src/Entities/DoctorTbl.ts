@@ -49,7 +49,10 @@ export class Doctor extends BaseEntity{
     isVerified:any
 
     @Column({name:"availableDays",type:"varchar", array: true,default: []})
-    availableDays:any
+    availableDays:any    
+    
+    @Column({name:"availableTimes",type:"varchar", array: true,default: []})
+    availableTimes:any
 
     @Column({name:"token",type:"varchar", length:255, default:null})
     token:any

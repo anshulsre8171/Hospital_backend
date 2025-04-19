@@ -2,8 +2,8 @@ import express from 'express';
 import {userRegisterController,userLoginController, ForgetPassswordController, ResetPasswordController, getuserPic,  } from '../Contollers/CommonController/LoginFunctionController';
 import { addDepartmentController, getDepartmentController } from '../Contollers/AdminController/DepartmentController';
 import { verifyToken } from '../middleware/Verifytoken';
-import { getDoctorBydepartmentIdController } from '../Contollers/DoctorController/DepartMentController';
-import { addapController,  } from '../Contollers/PatientController/BookAppointmentController';
+import { getDoctorBydepartmentIdController, getDoctorDaytimeBydoctorIdController } from '../Contollers/DoctorController/DepartMentController';
+import { addapController, addapGenController} from '../Contollers/PatientController/BookAppointmentController';
 export const route=express.Router();
 
 //common route
@@ -23,8 +23,9 @@ route.get('/admin-get-department',getDepartmentController);
 
 //doctor route
 route.get('/get-doctor-by-departmentId',verifyToken, getDoctorBydepartmentIdController);
+route.get('/get-doctordaytime-by-doctortId',verifyToken, getDoctorDaytimeBydoctorIdController);
 
 
 //patient route
 route.post('/doctor-appointment-book',verifyToken, addapController);
-// route.get('/get-appointment-by-patient',verifyToken, GetaddapByPatientController);  
+route.post('/doctor-appointment-bookGen',verifyToken, addapGenController);
