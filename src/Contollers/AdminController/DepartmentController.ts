@@ -1,4 +1,5 @@
 import { AppointmentTbl } from "../../Entities/AppointmentTbl";
+import { AppointmentTblGen } from "../../Entities/AppointmentTblGen";
 import { Department } from "../../Entities/DepartmentTbl"; 
 import { Doctor } from "../../Entities/DoctorTbl";
 import { Patient } from "../../Entities/PatientTbl";
@@ -52,5 +53,21 @@ export const getAppByAdmin = async (req: any, res: any) => {
   const result = await queryBuilder.getRawMany()
 
 
+  res.send(result)
+};
+
+export const getAppGenByAdmin = async (req: any, res: any) => {
+  
+  const queryBuilder = AppointmentTblGen.createQueryBuilder('appgentbl')
+    .select([
+      "patient.name","patient.email",  "patient.profile", "patient.gender", "patient.age","patient.bloodGroup", //Patient ka data nikal rhe hai
+      "department.name", "department.name",//Department ka data nikal rhe hai
+      "doctor.name", "doctor.fees", "doctor.profile", "doctor.specialist",
+      "appgentbl.id", "appgentbl.disease", "appgentbl.status", "appgentbl.appointmentType", "appgentbl.day", "appgentbl.time", "appgentbl.payment", "appgentbl.createdAt"
+    ])
+    .leftJoin(Patient, "patient", `appgentbl.patientId=patient.id::varchar`)
+    .leftJoin(Department, "department", `appgentbl.departmentId=department.id::varchar`)
+    .leftJoin(Doctor, "doctor", `appgentbl.doctorId=doctor.id::varchar`)
+  const result = await queryBuilder.getRawMany()
   res.send(result)
 };
