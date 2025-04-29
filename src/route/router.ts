@@ -1,6 +1,6 @@
 import express from 'express';
 import {userRegisterController,userLoginController, ForgetPassswordController, ResetPasswordController, getuserPic,  } from '../Contollers/CommonController/LoginFunctionController';
-import { addDepartmentController, getDepartmentController } from '../Contollers/AdminController/DepartmentController';
+import { addDepartmentController, getAppByAdmin, getDepartmentController } from '../Contollers/AdminController/DepartmentController';
 import { verifyToken } from '../middleware/Verifytoken';
 import { getAppoinmentByDoctor, getDoctorBydepartmentIdController, getDoctorDaytimeBydoctorIdController, getDoctorSchedule } from '../Contollers/DoctorController/DepartMentController';
 import { addapController, addapGenController, GetaddapByPatientController } from '../Contollers/PatientController/BookAppointmentController';
@@ -18,7 +18,7 @@ route.get('/user/:id/:userType', getuserPic);
 //admin route
 route.post('/admin-add-department',verifyToken, addDepartmentController);
 route.get('/admin-get-department',getDepartmentController);
-
+route.get('/get-appointment-by-admin',verifyToken, getAppByAdmin);  // saare appoinments
 
 
 //doctor route
