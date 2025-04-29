@@ -2,7 +2,7 @@ import express from 'express';
 import {userRegisterController,userLoginController, ForgetPassswordController, ResetPasswordController, getuserPic,  } from '../Contollers/CommonController/LoginFunctionController';
 import { addDepartmentController, getDepartmentController } from '../Contollers/AdminController/DepartmentController';
 import { verifyToken } from '../middleware/Verifytoken';
-import { getDoctorBydepartmentIdController, getDoctorDaytimeBydoctorIdController, getDoctorSchedule } from '../Contollers/DoctorController/DepartMentController';
+import { getAppoinmentByDoctor, getDoctorBydepartmentIdController, getDoctorDaytimeBydoctorIdController, getDoctorSchedule } from '../Contollers/DoctorController/DepartMentController';
 import { addapController, addapGenController, GetaddapByPatientController } from '../Contollers/PatientController/BookAppointmentController';
 export const route=express.Router();
 
@@ -25,6 +25,8 @@ route.get('/admin-get-department',getDepartmentController);
 route.get('/get-doctor-by-departmentId',verifyToken, getDoctorBydepartmentIdController);
 route.get('/get-doctordaytime-by-doctortId',verifyToken, getDoctorDaytimeBydoctorIdController);
 route.get('/get-doctordaytime-by-doctortIdfordisable',verifyToken, getDoctorSchedule);
+
+route.get('/get-appointment-by-doctorId',verifyToken, getAppoinmentByDoctor); // specific doctor ke saare appoinments
 
 
 //patient route
