@@ -5,6 +5,7 @@ import moment from "moment";
 import { Patient } from "../../Entities/PatientTbl";
 import { Department } from "../../Entities/DepartmentTbl";
 import { AppointmentTblGen } from "../../Entities/AppointmentTblGen";
+import { MoreThanOrEqual } from "typeorm";
  
  export const addapController = async (req: any, res: any) => {
    try {
@@ -85,11 +86,29 @@ import { AppointmentTblGen } from "../../Entities/AppointmentTblGen";
      return createResponse(res, 404, "Doctor not found", [], false, true)
      }
 
-    const days= await AppointmentTblGen.findOne({where:{day:day}}) //find day
-    const times=await AppointmentTblGen.findOne({where:{time:time}})
-    if(days && times){
-      return createResponse(res, 404, "This sloat is already booked", [], false, true)
-    }
+    // const days= await AppointmentTblGen.findOne({where:{day:day,time:time}}) //find day
+    // if(days){
+    //   return createResponse(res, 404, "This sloat is already booked", [], false, true)
+    // }
+
+    
+    // Get today's date start
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // Midnight for clean comparison
+
+        // Check if slot is already booked in future
+        const slotBooked = await AppointmentTblGen.findOne({
+          where: {
+            doctorId: doctorId,
+            day: day,
+            time: time,
+            createdAt: MoreThanOrEqual(today), // Only block if it's booked for today or future
+          },
+        });
+    
+        if (slotBooked) {
+          return createResponse(res, 409, "This slot is already booked", [], false, true);
+        }
 
     // Create new appointment
     const newAppointment = new AppointmentTblGen();
@@ -116,3 +135,57 @@ import { AppointmentTblGen } from "../../Entities/AppointmentTblGen";
   }
 };
 
+
+export const verifyDayTime=async(req:any,res:any)=>{
+  try{
+    const {day,time}=req.body
+    const check=await AppointmentTblGen.findOne({where:{day:day,time:time}})
+    
+    return createResponse(res, 201, "All ready booked", true, false)
+  }
+  catch(error){
+    console.error("Error in addapController:", error);
+    return res.status(500).json({ message: "Internal server error" });
+    
+  }
+}
+ // export const GetaddapByPatientController = async (req: any, res: any) => {
+ //   try {
+ //     const { patientId } = req.query;
+ //     const result = await AppointmentTbl.find({ where: { patientId: patientId } })
+ //     if (result?.length > 0) {
+ //       return createResponse(res, 200, `data found successfully`, result, true, false)
+ //     } else {
+ //       return createResponse(res, 404, `No data found`, [], false, true)
+ //     }
+ //   } catch (error) {
+ //     console.error("Error in addapController:", error);
+ //     return res.status(500).json({ message: "Internal server error" });
+ //   }
+ // };
+
+export const GetaddapByPatientController = async (req: any, res: any) => {
+const {patientId}=req.query;
+const queryBuilder = AppointmentTbl.createQueryBuilder('apptbl')
+.select([
+  "patient.name","patient.email",//Patient ka data nikal rhe hai
+  "department.name", "department.name",//Department ka data nikal rhe hai
+  "doctor.name", "doctor.fees", "doctor.profile", "doctor.specialist",
+  "apptbl.id", "apptbl.disease", "apptbl.symptoms", "apptbl.status", "apptbl.appointmentType", "apptbl.date", "apptbl.startTime", "apptbl.payment", "apptbl.createdAt"
+])
+.leftJoin(Patient, "patient", `apptbl.patientId=patient.id::varchar`)
+.leftJoin(Department, "department", `apptbl.departmentId=department.id::varchar`)
+.leftJoin(Doctor, "doctor", `apptbl.doctorId=doctor.id::varchar`)
+.where('apptbl.patientId=:patientId',{patientId:patientId})
+// .orWhere()
+//.andWhere()
+// .limit(1)
+// .offset(2)
+// .orderBy('apptbl.createdAt',"ASC")
+// .addOrderBy
+
+const result=await queryBuilder.getRawMany()
+  console.log(result,"@@@@");
+  
+res.send(result)
+};
